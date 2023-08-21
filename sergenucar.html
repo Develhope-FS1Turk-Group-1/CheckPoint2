@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mail Login/Register</title>
+    </head>
+    <body>
+        <div class="container">
+            <div>
+                <input type="mail" placeholder="admin@example.com" id="mail">
+            </div>
+            <div>
+                <input type="password" placeholder="********" id="password">
+            </div>
+            <div>
+                <input type="submit" value="Login" id="login">
+            </div>
+            <div>
+                <input type="submit" value="Register" id="register">
+            </div>
+        </div>
+        <script>
+            const clickLogin = document.querySelector('#login');
+            const clickRegister = document.querySelector('#register');
+
+            
+
+            const wholeInfo = [];            
+            let loggedInBefore = false;
+
+            clickLogin.addEventListener('click', ()=>{
+                let localTempInfo = JSON.parse(localStorage.getItem('wholeInfo'));
+
+                let mailValue = document.querySelector('#mail').value;
+                let passwordValue = document.querySelector('#password').value;
+                const userInfo = {
+                    'mail': mailValue,
+                    'password': passwordValue,
+                    'count': 0
+                }
+
+                if(localTempInfo === null){
+                    alert(`There is no user`);
+                } else {
+                    
+                    for(let i=0; i < localTempInfo.length; i++){
+                        if(localTempInfo[i].mail === mailValue){
+                            if(localTempInfo[i].password !== passwordValue){
+                                alert(`For ${mailValue} the password you are trying is wrong`);
+                            } else {
+                                localTempInfo[i].count += 1;
+                                alert(`${mailValue} is logged in. Count: ${localTempInfo[i].count}`);
+                                
+                            }
+                            
+                            loggedInBefore = true; 
+                        }
+                    }
+
+                    if(!loggedInBefore){
+                        alert(`There is no account with this email ${mailValue}`);
+                    }
+
+                    loggedInBefore = false;
+                    localStorage.removeItem('wholeInfo');
+                    localStorage.setItem('wholeInfo', JSON.stringify(localTempInfo));
+                }
+            })
+
+            clickRegister.addEventListener('click', ()=>{
+                let mailValue = document.querySelector('#mail').value;
+                let passwordValue = document.querySelector('#password').value;
+                let localTempInfo = JSON.parse(localStorage.getItem('wholeInfo'));
+
+                const userInfo = {
+                    'mail': mailValue,
+                    'password': passwordValue,
+                    'count': 0
+                }
+
+                console.log(localTempInfo)
+                if(localTempInfo === null){
+                    wholeInfo.push(userInfo);
+                    localStorage.setItem('wholeInfo', JSON.stringify(wholeInfo));
+                    alert(`${mailValue} is only registered now. Count: 0`);
+                } else {
+                    for(let i=0; i < localTempInfo.length; i++){
+                        if(localTempInfo[i].mail === mailValue){
+                            // localTempInfo[i].count += 1;
+                            alert(`${mailValue} is registered before`);
+                            return "";
+                        }
+                    }
+
+                    localStorage.removeItem('wholeInfo');
+                    wholeInfo.push(userInfo);
+                    localStorage.setItem('wholeInfo', JSON.stringify(wholeInfo));
+                    alert(`${mailValue} is only registered now. Count: 0`);
+                }
+            })
+        </script>
+    </body>
+</html>
